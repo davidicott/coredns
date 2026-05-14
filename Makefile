@@ -45,6 +45,8 @@ test-coverage:
 	# Using -count=1 to disable test result caching so coverage is always fresh
 	go test -v -race -count=1 -coverprofile=coverage.out -covermode=atomic ./...
 	go tool cover -html=coverage.out -o coverage.html
+	# Open the coverage report in the browser automatically (macOS)
+	@if [ "$(shell go env GOOS)" = "darwin" ]; then open coverage.html; fi
 
 ## fmt: format Go source files
 fmt:
@@ -95,5 +97,3 @@ release: clean
 		for arch in $${archs}; do \
 			output=$(BINARY)-$${os}-$${arch}; \
 			echo "  building $${output}"; \
-			CGO_ENABLED=0 GOOS=$${os} GOARCH=$${arch} \
-				go build -ldflags "$(LDFLAGS)" -o $
