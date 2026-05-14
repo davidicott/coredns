@@ -55,11 +55,15 @@ vet:
 	@echo ">> Running go vet"
 	go vet ./...
 
-## lint: run golint (requires golint to be installed)
+## lint: run golangci-lint if available, otherwise fall back to golint
 lint:
-	@echo ">> Running golint"
-	@which golint > /dev/null || go install golang.org/x/lint/golint@latest
-	golint ./...
+	@echo ">> Running linter"
+	@if which golangci-lint > /dev/null 2>&1; then \
+		golangci-lint run ./...; \
+	else \
+		which golint > /dev/null || go install golang.org/x/lint/golint@latest; \
+		golint ./...; \
+	fi
 
 ## clean: remove build artifacts
 clean:
