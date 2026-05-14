@@ -42,7 +42,8 @@ test:
 ## test-coverage: run tests with coverage report
 test-coverage:
 	@echo ">> Running tests with coverage"
-	go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
+	# Using -count=1 to disable test result caching so coverage is always fresh
+	go test -v -race -count=1 -coverprofile=coverage.out -covermode=atomic ./...
 	go tool cover -html=coverage.out -o coverage.html
 
 ## fmt: format Go source files
@@ -95,12 +96,4 @@ release: clean
 			output=$(BINARY)-$${os}-$${arch}; \
 			echo "  building $${output}"; \
 			CGO_ENABLED=0 GOOS=$${os} GOARCH=$${arch} \
-				go build -ldflags "$(LDFLAGS)" -o $${output} $(PKG); \
-		done; \
-	done
-
-## help: display this help message
-help:
-	@echo "Usage: make [target]"
-	@echo ""
-	@grep -E '^## ' $(MAKEFILE_LIST) | sed '
+				go build -ldflags "$(LDFLAGS)" -o $
