@@ -83,12 +83,13 @@ docker:
 		.
 
 ## release: cross-compile for common platforms
+# Note: removed windows/arm64 from release targets since I only need
+# linux and darwin builds for my homelab setup.
 release: clean
 	@echo ">> Cross-compiling release binaries"
-	for os in linux darwin windows; do \
+	for os in linux darwin; do \
 		for arch in amd64 arm64; do \
 			output=$(BINARY)-$${os}-$${arch}; \
-			[ "$${os}" = "windows" ] && output=$${output}.exe; \
 			echo "  building $${output}"; \
 			CGO_ENABLED=0 GOOS=$${os} GOARCH=$${arch} \
 				go build -ldflags "$(LDFLAGS)" -o $${output} $(PKG); \
