@@ -65,6 +65,8 @@ lint:
 clean:
 	@echo ">> Cleaning"
 	rm -f $(BINARY) coverage.out coverage.html
+	# also clean up any cross-compiled release binaries
+	rm -f $(BINARY)-linux-* $(BINARY)-darwin-* $(BINARY)-windows-*
 
 ## docker: build a Docker image
 docker:
