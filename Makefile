@@ -85,10 +85,13 @@ docker:
 ## release: cross-compile for common platforms
 # Note: removed windows/arm64 from release targets since I only need
 # linux and darwin builds for my homelab setup.
+# Only building arm64 for linux; my darwin machines are all Intel so amd64 only.
 release: clean
 	@echo ">> Cross-compiling release binaries"
 	for os in linux darwin; do \
-		for arch in amd64 arm64; do \
+		archs="amd64"; \
+		if [ "$${os}" = "linux" ]; then archs="amd64 arm64"; fi; \
+		for arch in $${archs}; do \
 			output=$(BINARY)-$${os}-$${arch}; \
 			echo "  building $${output}"; \
 			CGO_ENABLED=0 GOOS=$${os} GOARCH=$${arch} \
@@ -100,4 +103,4 @@ release: clean
 help:
 	@echo "Usage: make [target]"
 	@echo ""
-	@grep -E '^## ' $(MAKEFILE_LIST) | sed 's/## /  /'
+	@grep -E '^## ' $(MAKEFILE_LIST) | sed '
