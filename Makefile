@@ -45,8 +45,9 @@ test-coverage:
 	# Using -count=1 to disable test result caching so coverage is always fresh
 	go test -v -race -count=1 -coverprofile=coverage.out -covermode=atomic ./...
 	go tool cover -html=coverage.out -o coverage.html
-	# Open the coverage report in the browser automatically (macOS)
-	@if [ "$(shell go env GOOS)" = "darwin" ]; then open coverage.html; fi
+	# Open the coverage report in the browser automatically (macOS or Linux with xdg-open)
+	@if [ "$(shell go env GOOS)" = "darwin" ]; then open coverage.html; \
+	elif [ "$(shell go env GOOS)" = "linux" ] && which xdg-open > /dev/null 2>&1; then xdg-open coverage.html; fi
 
 ## fmt: format Go source files
 fmt:
@@ -93,7 +94,4 @@ release: clean
 	@echo ">> Cross-compiling release binaries"
 	for os in linux darwin; do \
 		archs="amd64"; \
-		if [ "$${os}" = "linux" ]; then archs="amd64 arm64"; fi; \
-		for arch in $${archs}; do \
-			output=$(BINARY)-$${os}-$${arch}; \
-			echo "  building $${output}"; \
+		if [ "$${os}" = "linux" ];
