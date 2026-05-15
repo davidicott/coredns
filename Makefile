@@ -90,8 +90,15 @@ docker:
 # Note: removed windows/arm64 from release targets since I only need
 # linux and darwin builds for my homelab setup.
 # Only building arm64 for linux; my darwin machines are all Intel so amd64 only.
-release: clean
-	@echo ">> Cross-compiling release binaries"
-	for os in linux darwin; do \
-		archs="amd64"; \
-		if [ "$${os}" = "linux" ];
+# Also skipping linux/386 — nothing in my homelab runs 32-bit anymore.
+release:
+	@echo ">> Cross-compiling release binaries for version=$(VERSION)"
+	for platform in linux/amd64 linux/arm64 darwin/amd64; do \
+		OS=$$(echo $$platform | cut -d/ -f1); \
+		ARCH=$$(echo $$platform | cut -d/ -f2); \
+		OUTPUT=$(BINARY)-$$OS-$$ARCH; \
+		echo "  -> $$OUTPUT"; \
+		CGO_ENABLED=0 GOOS=$$OS GOARCH=$$ARCH \
+			go build $(GOFLAGS) -ldflags "$(LDFLAGS)" -o $$OUTPUT $(PKG); \
+	done
+	@echo ">> Release binaries built."
